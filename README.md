@@ -15,3 +15,8 @@ Created Filters:
 Brand / State / Sales channel / Department / Age / Income range / Birth state.
 
 The creation of the dashboards enabled the business team to develop action plans aimed at increasing the number of registered users and driving the company's growth.
+
+![Dash 1]([URL_da_imagem](https://github.com/martinez-ie/powerbi-dashboards/blob/main/1.png))
+
+![Dash 1]([URL_da_imagem](https://github.com/martinez-ie/powerbi-dashboards/blob/main/2.png))
+
