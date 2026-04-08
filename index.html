@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commerce Intelligence Report | Ingrid Martinez</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--ink:#0d1117;--ink2:#1c2333;--ink3:#30374a;--paper:#fafaf8;--paper2:#f3f2ef;--paper3:#eae9e4;--border:#e0ddd6;--border2:#cac7bf;--coral:#e63946;--coral-dim:rgba(230,57,70,.09);--coral-light:#fff1f2;--blue:#1d4ed8;--blue-dim:rgba(29,78,216,.08);--blue-light:#eff6ff;--amber:#b45309;--amber-light:#fffbeb;--green:#065f46;--green-light:#ecfdf5;--teal:#0e7490;--teal-light:#ecfeff;--serif:'Outfit',sans-serif;--display:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;--r:10px;--r-lg:16px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--display);min-height:100vh;overflow-x:hidden}
+.topbar{background:var(--ink);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:300}
+.topbar-brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:28px;height:28px;background:var(--coral);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-text{font-size:13px;font-weight:700;color:#fff;letter-spacing:.04em;text-transform:uppercase}
+.brand-sep{color:rgba(255,255,255,.2);margin:0 6px}
+.brand-sub{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.06em}
+.topbar-nav{display:flex;gap:2px}
+.nav-btn{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,.45);cursor:pointer;transition:all .2s}
+.nav-btn:hover{color:rgba(255,255,255,.8)}
+.nav-btn.active{background:rgba(255,255,255,.1);color:#fff}
+.topbar-meta{display:flex;align-items:center;gap:10px}
+.period-tag{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);padding:3px 10px;border-radius:4px;letter-spacing:.06em}
+.filter-indicator{display:none;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--coral);background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);padding:3px 8px;border-radius:4px}
+.filter-indicator.on{display:flex}
+.fi-dot{width:5px;height:5px;background:var(--coral);border-radius:50%}
+.filterbar{background:var(--paper2);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.fl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--border2);white-space:nowrap}
+.fsel{font-family:var(--display);font-size:12px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:5px 26px 5px 9px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M1 1l3.5 3L8 1' stroke='%23aaa' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;min-width:130px;transition:border-color .15s}
+.fsel:focus{border-color:var(--coral)}
+.fsep{width:1px;height:18px;background:var(--border)}
+.reset-btn{font-size:11px;font-weight:600;color:rgba(230,57,70,.7);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:5px;transition:all .15s;letter-spacing:.02em}
+.reset-btn:hover{color:var(--coral);background:var(--coral-dim)}
+.page{display:none}.page.active{display:block;animation:fu .3s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:var(--paper);border-bottom:1px solid var(--border);padding:36px 32px 32px;position:relative;overflow:hidden}
+
+.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hero-eye::before{content:'';width:16px;height:1px;background:var(--coral)}
+.hero-h{font-family:var(--display);font-size:26px;font-weight:500;color:var(--ink);line-height:1.3;max-width:700px;margin-bottom:10px;letter-spacing:-.01em}
+.hero-h em{color:var(--coral);font-style:normal}
+.hero-sub{font-size:13px;color:var(--ink3);max-width:580px;line-height:1.7;font-weight:400}
+.hkpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:28px}
+.hk{background:var(--paper);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;transition:box-shadow .2s}
+.hk:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.hk-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--border2);margin-bottom:10px}
+.hk-val{font-size:26px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:6px}
+.hk-val.c{color:var(--coral)}
+.hk-sub{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px}
+.badge-c{color:var(--coral);background:rgba(230,57,70,.15)}
+.badge-g{color:#34d399;background:rgba(52,211,153,.12)}
+.badge-b{color:#60a5fa;background:rgba(96,165,250,.12)}
+
+.story-strip{background:var(--paper2);border-bottom:1px solid var(--border);padding:20px 32px;display:grid;grid-template-columns:repeat(3,1fr)}
+.si{padding:0 24px;border-right:1px solid var(--border)}
+.si:first-child{padding-left:0}.si:last-child{border-right:none}
+.si-n{font-family:var(--display);font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.si-n.c{color:var(--coral)}.si-n.b{color:#60a5fa}.si-n.g{color:#34d399}
+.si-d{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.5;font-weight:400}
+.si-d strong{color:var(--ink);font-weight:600}
+.content{padding:28px 32px;max-width:1400px;margin:0 auto}
+.card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;position:relative;transition:box-shadow .2s}
+.card:hover{box-shadow:0 8px 30px rgba(0,0,0,.06)}
+.c-eye{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--border2);margin-bottom:5px}
+.c-title{font-family:var(--display);font-size:16px;font-weight:500;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.3}
+.c-ins{font-size:11.5px;color:var(--ink3);line-height:1.65;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--paper3)}
+.c-ins strong{color:var(--ink);font-weight:600}
+.h180{height:180px;position:relative}.h220{height:220px;position:relative}.h260{height:260px;position:relative}.h300{height:300px;position:relative}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:20px;margin-bottom:20px}
+.g12{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;margin-bottom:20px}
+.dept-list{display:flex;flex-direction:column;gap:10px}
+.dr{display:flex;align-items:center;gap:10px}
+.dr-rank{font-family:var(--mono);font-size:10px;color:var(--border2);width:16px;text-align:right;flex-shrink:0}
+.dr-name{font-size:12px;font-weight:500;color:var(--ink);width:158px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr-bw{flex:1;height:8px;background:var(--paper3);border-radius:4px;overflow:hidden}
+.dr-bf{height:100%;border-radius:4px;width:0;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.dr-v{font-family:var(--mono);font-size:10px;color:var(--ink3);min-width:50px;text-align:right}
+.dr-p{font-family:var(--mono);font-size:10px;color:var(--border2);min-width:34px;text-align:right}
+.callout{display:flex;gap:14px;align-items:flex-start;background:var(--paper2);border:1px solid var(--border);border-left:3px solid var(--coral);border-radius:0 var(--r) var(--r) 0;padding:14px 16px;margin-bottom:10px}
+.callout.bl{border-left-color:var(--blue)}.callout.gr{border-left-color:var(--green)}.callout.am{border-left-color:var(--amber)}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.c-txt{font-size:12px;color:var(--ink3);line-height:1.65}
+.c-txt strong{color:var(--ink);display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+.estado-list{display:flex;flex-direction:column;gap:8px}
+.er{display:flex;align-items:center;gap:10px}
+.er-flag{font-size:12px;font-weight:700;font-family:var(--mono);color:var(--ink);width:24px}
+.er-bw{flex:1;height:6px;background:var(--paper3);border-radius:3px;overflow:hidden}
+.er-bf{height:100%;border-radius:3px;width:0;transition:width 1.3s cubic-bezier(.16,1,.3,1)}
+.er-q{font-family:var(--mono);font-size:10px;color:var(--ink3);min-width:44px;text-align:right}
+.er-p{font-family:var(--mono);font-size:10px;color:var(--border2);min-width:34px;text-align:right}
+.ch-list{display:flex;flex-direction:column;gap:12px}
+.ch-row{background:var(--paper2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.ch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ch-name{font-size:13px;font-weight:600;color:var(--ink)}
+.ch-badge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px}
+.chm{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.cml{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--border2);margin-bottom:2px}
+.cmv{font-family:var(--display);font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.ch-bw{height:3px;background:var(--paper3);border-radius:2px;margin-top:10px;overflow:hidden}
+.ch-bf{height:100%;border-radius:2px;width:0;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+footer{background:var(--ink);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:16px}
+.fc{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.22);letter-spacing:.04em}
+.fl-links{display:flex;gap:20px}
+.flink{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s}
+.flink:hover{color:var(--coral)}
+@media(max-width:1024px){.hkpis{grid-template-columns:repeat(3,1fr)}.g2,.g3,.g12{grid-template-columns:1fr}.story-strip{grid-template-columns:1fr}}
+@media(max-width:640px){.hkpis{grid-template-columns:1fr 1fr}.topbar-nav{display:none}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="8" width="3" height="7" rx="1" fill="white" opacity=".5"/><rect x="6" y="5" width="3" height="10" rx="1" fill="white" opacity=".75"/><rect x="11" y="2" width="3" height="13" rx="1" fill="white"/></svg>
+    </div>
+    <div>
+      <span class="brand-text">Commerce Intelligence Report</span>
+      <div class="brand-sub">martinez-ie &middot; github.com</div>
+    </div>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-btn active" onclick="showPage('exec',this)">Executive Overview</button>
+    <button class="nav-btn" onclick="showPage('mercado',this)">Market &amp; Channels</button>
+    <button class="nav-btn" onclick="showPage('cliente',this)">Customer Profile</button>
+  </nav>
+  <div class="topbar-meta">
+    <div class="filter-indicator" id="fi"><div class="fi-dot"></div><span id="ft">Filter active</span></div>
+    <span class="period-tag">30 MAR &ndash; 13 APR 2021</span>
+  </div>
+</header>
+
+<div class="filterbar">
+  <span class="fl">Channel</span>
+  <select class="fsel" id="fC" onchange="go()">
+    <option value="all">All channels</option>
+    <option value="canal_Mobile">Mobile</option>
+    <option value="canal_Internet">Internet</option>
+    <option value="canal_Aplicativo">Aplicativo</option>
+    <option value="canal_Mobil">Mobil</option>
+  </select>
+  <span class="fl">Card Brand</span>
+  <select class="fsel" id="fB" onchange="go()">
+    <option value="all">Brand A &amp; B</option>
+    <option value="band_A">Brand A</option>
+    <option value="band_B">Brand B</option>
+  </select>
+  <span class="fl">State</span>
+  <select class="fsel" id="fE" onchange="go()">
+    <option value="all">All states</option>
+    <option value="estado_SP">Sao Paulo</option>
+    <option value="estado_RJ">Rio de Janeiro</option>
+    <option value="estado_MG">Minas Gerais</option>
+    <option value="estado_RS">Rio Grande do Sul</option>
+    <option value="estado_PR">Parana</option>
+    <option value="estado_BA">Bahia</option>
+    <option value="estado_SC">Santa Catarina</option>
+    <option value="estado_DF">Federal District</option>
+  </select>
+  <div class="fsep"></div>
+  <button class="reset-btn" onclick="reset()">Clear</button>
+</div>
+
+<!-- PAGE EXEC -->
+<div class="page active" id="page-exec">
+  <div class="hero">
+    <div class="hero-eye">Commerce Intelligence Report</div>
+    <h1 class="hero-h">R$72.6M in revenue generated in <em>15 days</em>.<br>Telecom leads. Southeast dominates. Freight, near zero.</h1>
+    <p class="hero-sub">Full analysis of 80,228 transactions between 30 March and 13 April 2021. Four departments account for 84% of total revenue. The Internet channel outperforms Mobile in average order value by 19%.</p>
+    <div class="hkpis">
+      <div class="hk"><div class="hk-lbl">Total Revenue</div><div class="hk-val c" id="hv-sf">R$72,6M</div><div class="hk-sub">excl. freight &nbsp;<span class="badge badge-c">R$72,9M incl. freight</span></div></div>
+      <div class="hk"><div class="hk-lbl">Transactions</div><div class="hk-val" id="hv-v">80.228</div><div class="hk-sub"><span id="hv-med">~5.348</span>/day avg</div></div>
+      <div class="hk"><div class="hk-lbl">Avg Order Value</div><div class="hk-val" id="hv-t">R$905</div><div class="hk-sub">Internet <span class="badge badge-b">R$974</span> Mobile <span style="color:var(--ink3)">R$821</span></div></div>
+      <div class="hk"><div class="hk-lbl">Active Customers</div><div class="hk-val" id="hv-c">26.345</div><div class="hk-sub">Full base: <span style="color:var(--ink3)">26.425</span></div></div>
+      <div class="hk"><div class="hk-lbl">Freight impact</div><div class="hk-val" style="color:var(--green)">0,39%</div><div class="hk-sub">R$280k of R$72.6M <span class="badge badge-g">Free shipping</span></div></div>
+    </div>
+  </div>
+  <div class="story-strip">
+    <div class="si"><div class="si-n c">32,2%</div><div class="si-d"><strong>Telefones e Celulares</strong> leads with R$22M. One department, one third of total revenue.</div></div>
+    <div class="si"><div class="si-n b">73%</div><div class="si-d"><strong>SP + RJ + MG</strong> account for 73% of national volume. Alta dependencia do Sudeste.</div></div>
+    <div class="si"><div class="si-n g">60%</div><div class="si-d"><strong>Brand B</strong> domina com 48.048 vendas vs 32.180 da Brand A. Negociar taxas e prioridade.</div></div>
+  </div>
+  <div class="content">
+    <div class="g2">
+      <div class="card">
+        <div class="c-eye">// daily revenue</div>
+        <div class="c-title">Daily Revenue (R$)</div>
+        <div class="c-ins">The period opens on <strong>30 March with 8,173 sales</strong> — likely an end-of-month campaign or flash sale. Secondary peak on 06 April (8,134). The drop from 10 April reflects the end of the data capture cycle.</div>
+        <div class="h220"><canvas id="cValD"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="c-eye">// daily volume</div>
+        <div class="c-title">Contagem de Transactions por Dia</div>
+        <div class="c-ins">The <strong>highlighted bar (red) marks the highest volume day</strong>. Clear weekly pattern: peaks on weekdays and natural drop on weekends (10-13 Apr), confirming typical B2C retail purchase behaviour.</div>
+        <div class="h220"><canvas id="cQtdD"></canvas></div>
+      </div>
+    </div>
+    <div class="g12">
+      <div class="card">
+        <div class="c-eye">// revenue concentration</div>
+        <div class="c-title">Revenue by Department</div>
+        <div class="c-ins">The <strong>top 4 departments account for 84% of revenue</strong>. Technology and electronics dominate completely — Phones, TVs and IT together = 65%. The bar shows each category's percentage share.</div>
+        <div class="dept-list" id="dL"></div>
+      </div>
+      <div>
+        <div class="callout"><div class="callout-icon">&#127919;</div><div class="c-txt"><strong>Critical concentration risk</strong>84% of revenue from 4 departments. Any supply disruption in Phones or Home Appliances directly impacts results. Diversifying the category mix reduces vulnerability.</div></div>
+        <div class="callout bl"><div class="callout-icon">&#128200;</div><div class="c-txt"><strong>Underestimated long tail</strong>28 departments generate 16% of revenue. Games (R$565k), Sports (R$538k) and Automotive (R$506k) have significant growth potential with proper activation and visibility.</div></div>
+        <div class="callout gr"><div class="callout-icon">&#128521;</div><div class="c-txt"><strong>Internet converts with 19% higher AOV</strong>Internet channel generates R$974/transaction vs R$821 on Mobile. Redirecting part of Mobile acquisition budget to Internet can increase revenue without increasing transaction volume.</div></div>
+        <div class="callout am"><div class="callout-icon">&#128666;</div><div class="c-txt"><strong>Free shipping policy confirmed</strong>Only R$280k impact on R$72.6M (0.39%). Freight is fully absorbed by the operation. This cost should be audited to ensure it does not compress margins on lower average-value items.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE MERCADO -->
+<div class="page" id="page-mercado">
+  <div class="hero" style="padding:28px 32px">
+    <div class="hero-eye">Market Distribution</div>
+    <h1 class="hero-h" style="font-size:22px;margin-bottom:0">Three states account for 73% of volume. Internet leads in revenue despite matching Mobile in transaction count.</h1>
+  </div>
+  <div class="content">
+    <div class="g2">
+      <div class="card">
+        <div class="c-eye">// geographic reach</div>
+        <div class="c-title">Sales Volume by State</div>
+        <div class="c-ins"><strong>SP, RJ and MG dominate with 73% of total volume.</strong> States like RS and PR have 7-10x fewer sales than SP. Low penetration in the South, North and Northeast indicates an unexplored market gap — a structural geographic growth opportunity.</div>
+        <div class="estado-list" id="eL"></div>
+      </div>
+      <div class="card">
+        <div class="c-eye">// channel performance</div>
+        <div class="c-title">Sales Channel Analysis</div>
+        <div class="c-ins">Mobile and Internet have identical volume (27.9k), but <strong>Internet generates R$4.3M more</strong>. Mobil has the lowest AOV (R$653) — likely a quick-access channel for lower-priced products. Aplicativo is competitive and deserves more investment.</div>
+        <div class="ch-list" id="chL"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="c-eye">// card brand</div>
+        <div class="c-title">Distribution by Card Brand</div>
+        <div class="c-ins"><strong>Brand B lidera com 60% das transacoes</strong> (48.048 vs 32.180). A diferenca de 15.868 vendas justifica negociacao de taxas e beneficios preferenciais com a operadora B. Dual branding (A+B) garante cobertura ampla do mercado.</div>
+        <div class="h260"><canvas id="cBand"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="c-eye">// volume by category</div>
+        <div class="c-title">Transactions por Departamento</div>
+        <div class="c-ins">Small Appliances (10.1k transactions, R$2.4M) has an <strong>AOV of only R$238</strong> vs Home Appliances (11.1k transactions, R$13.6M) at R$1,228. This shows that purchase frequency and AOV are distinct metrics — both matter for strategic mix decisions.</div>
+        <div class="h260"><canvas id="cDQ"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE CLIENTE -->
+<div class="page" id="page-cliente">
+  <div class="hero" style="padding:28px 32px">
+    <div class="hero-eye">Demographic Profile</div>
+    <h1 class="hero-h" style="font-size:22px;margin-bottom:0">Average age 53. Uniformly distributed income. A mature audience that prioritises trust and convenience.</h1>
+  </div>
+  <div class="content">
+    <div class="g2">
+      <div class="card">
+        <div class="c-eye">// age distribution</div>
+        <div class="c-title">Customer Age Distribution</div>
+        <div class="c-ins">The <strong>75+ age group is the largest with 5,096 customers</strong> — above any other 10-year bracket. This senior audience requires simple UX, legible fonts, accessible human support and trust-based communication, not trend-driven messaging.</div>
+        <div class="h220"><canvas id="cI"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="c-eye">// income distribution</div>
+        <div class="c-title">Customer Monthly Income</div>
+        <div class="c-ins">Nearly uniform distribution from R$2.5k to R$15k — <strong>approximately 4,900 customers per bracket</strong>. Average income R$8,241. A democratic base with no dependence on a single segment. Pricing strategy can serve all brackets without forced segmentation.</div>
+        <div class="h220"><canvas id="cR"></canvas></div>
+      </div>
+    </div>
+    <div class="g12">
+      <div class="card">
+        <div class="c-eye">// state of birth</div>
+        <div class="c-title">Geographic Origin of Customers</div>
+        <div class="c-ins"><strong>SP accounts for over 40% of the customer base</strong> by state of birth. Northeastern and Northern customers are under-represented relative to their national demographic weight. Acquisition campaigns focused on the Northeast (BA, CE, PE) have high return potential.</div>
+        <div class="h260"><canvas id="cU"></canvas></div>
+      </div>
+      <div>
+        <div class="callout" style="margin-bottom:12px"><div class="callout-icon">&#128100;</div><div class="c-txt"><strong>Mature adult, experience first</strong>Average age 53 with peak at 75+. This customer is less impulsive, more loyal and highly sensitive to service quality. Investing in after-sales, support and retention yields a higher ROI than acquisition for this profile.</div></div>
+        <div class="callout bl" style="margin-bottom:12px"><div class="callout-icon">&#127758;</div><div class="c-txt"><strong>Democratic income, national opportunity</strong>A balanced base across all income brackets enables offers for every level. Geographic concentration in SP reflects marketing and logistics presence, not the customer base itself — national expansion is viable.</div></div>
+        <div class="callout gr" style="margin-bottom:12px"><div class="callout-icon">&#128301;</div><div class="c-txt"><strong>Durable goods profile, not impulse</strong>Phones, TVs and Home Appliances dominate. This is not a fashion or lifestyle customer — it is a buyer of technology and household utility. Communication strategy should emphasise value for money, warranty and durability.</div></div>
+        <div class="callout am"><div class="callout-icon">&#128301;</div><div class="c-txt"><strong>Northeast and North: acquisition gap</strong>BA, CE and PE together likely represent less than 5% of the base, despite accounting for nearly 20% of Brazil's population. A geographic expansion strategy with logistics partners could triple the market potential.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="fc">INGRID MARTINEZ &bull; DATA ANALYST &bull; KILKENNY, IRELAND &bull; 80,228 TRANSACTIONS &bull; MAR-APR 2021</div>
+  <div class="fl-links">
+    <a href="https://github.com/martinez-ie/powerbi-dashboards" class="flink" target="_blank">GitHub</a>
+    <a href="https://www.linkedin.com/in/ingridmartinezm/" class="flink" target="_blank">LinkedIn</a>
+    <a href="https://ingrid-martinez-portfolio.vercel.app/" class="flink" target="_blank">Portfolio</a>
+  </div>
+</footer>
+
+<script>
+const D = {"slices": {"all": {"kpis": {"vendas": 80228, "valor_sf": 72616660.0, "valor_cf": 72896751.0, "ticket": 905.0, "clientes": 26345, "frete_impacto_pct": 0.39, "top_dept": "Telefones e Celulares", "top_dept_pct": 32.2, "sp_pct": 40.0, "spike_dia": "30/03", "spike_val": 8173}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [8173, 6615, 5929, 6564, 5648, 4773, 7059, 8134, 7360, 6299, 5264, 3467, 2078, 2128, 737], "daily_valor": [6282709, 5232976, 4925978, 5852702, 5589911, 4197445, 6135206, 8601832, 7251602, 5744891, 4998847, 3424846, 1834234, 1851195, 692278], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Bebes"], "dept_qtd": [15589, 11058, 5496, 5438, 4276, 10100, 3623, 1784, 1808, 4630], "dept_valor": [22111204, 13569327, 11309554, 10966563, 2799080, 2399602, 2143560, 1714556, 1113501, 598895], "dept_pct": [32.2, 19.7, 16.5, 16.0, 4.1, 3.5, 3.1, 2.5, 1.6, 0.9], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "SC", "DF", "PE", "GO"], "estado_qtd": [29896, 17588, 11101, 4165, 2789, 2047, 1952, 1916, 1639, 1616], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [27921, 27907, 24234, 166], "canal_valor": [22916317, 27200042, 22391962, 108337], "band_names": ["A", "B"], "band_qtd": [32180, 48048]}, "canal_Mobile": {"kpis": {"vendas": 27921, "valor_sf": 22916317.0, "valor_cf": 23026183.0, "ticket": 821.0, "clientes": 17750}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [2552, 2222, 2218, 2330, 2233, 1922, 2425, 2615, 2370, 2082, 1779, 1300, 877, 749, 247], "daily_valor": [1717792, 1629141, 1657501, 1967001, 2120582, 1502828, 2038595, 2282188, 2023934, 1641226, 1544826, 1237302, 720790, 599030, 233573], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Bebes"], "dept_qtd": [5066, 3603, 1601, 1686, 1657, 3584, 1142, 646, 643, 2150], "dept_valor": [6653976, 4246592, 3406901, 3372877, 1055008, 838712, 715089, 580696, 373859, 275763], "dept_pct": [30.9, 19.7, 15.8, 15.7, 4.9, 3.9, 3.3, 2.7, 1.7, 1.3], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "DF", "SC", "PE", "GO"], "estado_qtd": [10316, 6207, 3851, 1428, 1012, 738, 691, 687, 545, 537], "canal_names": ["Mobile"], "canal_qtd": [27921], "canal_valor": [22916317], "band_names": ["A", "B"], "band_qtd": [11275, 16646]}, "canal_Aplicativo": {"kpis": {"vendas": 24234, "valor_sf": 22391963.0, "valor_cf": 22462761.0, "ticket": 924.0, "clientes": 16185}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [2320, 1976, 1887, 2067, 1949, 1382, 1916, 2097, 1968, 1828, 1667, 1430, 666, 755, 326], "daily_valor": [2024435, 1744771, 1697100, 1926484, 1935592, 1240219, 1776718, 2017289, 1722286, 1559364, 1499157, 1521574, 652145, 745293, 329529], "dept_names": ["Telefones e Celulares", "TVs e Acessorios", "Eletrodomesticos", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Audio", "Tablets", "Games"], "dept_qtd": [5263, 2496, 3908, 1216, 1409, 2580, 722, 592, 414, 222], "dept_valor": [6512030, 4831067, 4644804, 2514795, 980518, 600178, 422012, 387983, 368328, 176017], "dept_pct": [30.4, 22.5, 21.7, 11.7, 4.6, 2.8, 2.0, 1.8, 1.7, 0.8], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "SC", "DF", "GO", "PE"], "estado_qtd": [8971, 5241, 3414, 1268, 836, 607, 590, 589, 508, 497], "canal_names": ["Aplicativo"], "canal_qtd": [24234], "canal_valor": [22391962], "band_names": ["A", "B"], "band_qtd": [8267, 15967]}, "canal_Internet": {"kpis": {"vendas": 27907, "valor_sf": 27200043.0, "valor_cf": 27298496.0, "ticket": 975.0, "clientes": 17506}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [3135, 2417, 1824, 2167, 1466, 1469, 2718, 3422, 3022, 2389, 1818, 737, 535, 624, 164], "daily_valor": [2432143, 1859062, 1571377, 1959216, 1533736, 1454397, 2319893, 4302355, 3505381, 2544300, 1954863, 665969, 461298, 506870, 129175], "dept_names": ["Telefones e Celulares", "Informatica", "Eletrodomesticos", "TVs e Acessorios", "Acessorios e Inovacoes", "Eletroportateis", "Tablets", "Moveis", "Audio", "Esporte e Lazer"], "dept_qtd": [5237, 2522, 3535, 1389, 1749, 3915, 720, 1201, 567, 235], "dept_valor": [8918476, 5057589, 4662668, 3053460, 1002745, 956197, 763677, 758469, 349771, 247967], "dept_pct": [34.6, 19.6, 18.1, 11.8, 3.9, 3.7, 3.0, 2.9, 1.4, 1.0], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "SC", "DF", "PE", "GO"], "estado_qtd": [10554, 6100, 3821, 1463, 936, 693, 671, 630, 589, 568], "canal_names": ["Internet"], "canal_qtd": [27907], "canal_valor": [27200042], "band_names": ["A", "B"], "band_qtd": [12545, 15362]}, "canal_Mobil": {"kpis": {"vendas": 166, "valor_sf": 108337.0, "valor_cf": 109311.0, "ticket": 653.0, "clientes": 166}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [166, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "daily_valor": [108337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "dept_names": ["Telefones e Celulares", "Informatica", "TVs e Acessorios", "Eletrodomesticos", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Bebes", "Utilidades Domesticas", "Audio"], "dept_qtd": [23, 14, 10, 12, 9, 21, 10, 20, 9, 6], "dept_valor": [26720, 21301, 18124, 15262, 5083, 4513, 3712, 2389, 1943, 1886], "dept_pct": [26.5, 21.1, 18.0, 15.1, 5.0, 4.5, 3.7, 2.4, 1.9, 1.9], "estado_names": ["SP", "RJ", "MG", "BA", "PE", "RS", "DF", "PR", "SC", "GO"], "estado_qtd": [55, 40, 15, 9, 8, 6, 6, 5, 4, 3], "canal_names": ["Mobil"], "canal_qtd": [166], "canal_valor": [108337], "band_names": ["A", "B"], "band_qtd": [93, 73]}, "band_A": {"kpis": {"vendas": 32180, "valor_sf": 22058606.0, "valor_cf": 22189385.0, "ticket": 685.0, "clientes": 19067}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [3692, 2938, 2729, 2689, 2107, 2300, 3117, 3050, 2869, 2308, 1676, 990, 917, 661, 137], "daily_valor": [2383917, 1933615, 1615256, 1756934, 1467507, 1554978, 2149572, 2338766, 2223030, 1569481, 1203339, 682237, 647548, 422526, 109891], "dept_names": ["Informatica", "Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Eletroportateis", "Tablets", "Acessorios e Inovacoes", "Moveis", "Bebes", "Audio"], "dept_qtd": [2720, 3644, 3733, 1526, 3870, 1090, 1488, 1255, 4106, 676], "dept_valor": [4973798, 4246338, 3742198, 3139544, 907107, 897791, 750491, 734150, 465318, 392543], "dept_pct": [24.6, 21.0, 18.5, 15.5, 4.5, 4.4, 3.7, 3.6, 2.3, 1.9], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "SC", "DF", "PE", "GO"], "estado_qtd": [11980, 7109, 4441, 1657, 1129, 838, 806, 776, 660, 645], "canal_names": ["Internet", "Mobile", "Aplicativo", "Mobil"], "canal_qtd": [12545, 11275, 8267, 93], "canal_valor": [10202894, 6736630, 5070074, 49005], "band_names": ["A"], "band_qtd": [32180]}, "band_B": {"kpis": {"vendas": 48048, "valor_sf": 50558054.0, "valor_cf": 50707366.0, "ticket": 1052.0, "clientes": 22859}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [4481, 3677, 3200, 3875, 3541, 2473, 3942, 5084, 4491, 3991, 3588, 2477, 1161, 1467, 600], "daily_valor": [3898791, 3299360, 3310721, 4095768, 4122404, 2642467, 3985634, 6263065, 5028572, 4175409, 3795508, 2742608, 1186685, 1428668, 582386], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Games"], "dept_qtd": [11945, 7325, 3970, 2718, 3021, 6230, 2135, 694, 1132, 404], "dept_valor": [17864865, 9827128, 8170009, 5992764, 2064929, 1492495, 1393068, 816764, 720957, 367208], "dept_pct": [36.7, 20.2, 16.8, 12.3, 4.2, 3.1, 2.9, 1.7, 1.5, 0.8], "estado_names": ["SP", "RJ", "MG", "RS", "PR", "BA", "SC", "DF", "PE", "GO"], "estado_qtd": [17916, 10479, 6660, 2508, 1660, 1209, 1146, 1140, 979, 971], "canal_names": ["Mobile", "Aplicativo", "Internet", "Mobil"], "canal_qtd": [16646, 15967, 15362, 73], "canal_valor": [16179686, 17321888, 16997147, 59331], "band_names": ["B"], "band_qtd": [48048]}, "estado_SP": {"kpis": {"vendas": 29896, "valor_sf": 26886796.0, "valor_cf": 26990028.0, "ticket": 899.0, "clientes": 18314}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [3043, 2449, 2214, 2431, 2162, 1782, 2626, 3015, 2730, 2368, 1946, 1315, 787, 754, 274], "daily_valor": [2301826, 1935568, 1803407, 2150856, 2187411, 1584353, 2247624, 3140799, 2676500, 2138466, 1830361, 1342352, 647835, 644403, 255028], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Bebes"], "dept_qtd": [5855, 4123, 2039, 1992, 1583, 3705, 1361, 681, 665, 1785], "dept_valor": [8328820, 4982373, 4151736, 3977478, 1036180, 878122, 805531, 662211, 420874, 228226], "dept_pct": [32.7, 19.6, 16.3, 15.6, 4.1, 3.4, 3.2, 2.6, 1.7, 0.9], "estado_names": ["SP"], "estado_qtd": [29896], "canal_names": ["Internet", "Mobile", "Aplicativo", "Mobil"], "canal_qtd": [10554, 10316, 8971, 55], "canal_valor": [10117788, 8447476, 8278071, 43459], "band_names": ["A", "B"], "band_qtd": [11980, 17916]}, "estado_RJ": {"kpis": {"vendas": 17588, "valor_sf": 15994045.0, "valor_cf": 16056286.0, "ticket": 909.0, "clientes": 13023}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [1767, 1489, 1277, 1444, 1241, 1090, 1527, 1815, 1677, 1326, 1162, 713, 447, 462, 151], "daily_valor": [1352540, 1162495, 1035640, 1273367, 1232038, 984576, 1328352, 1905713, 1641214, 1245301, 1151745, 678495, 443635, 421715, 137212], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "Informatica", "TVs e Acessorios", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Bebes"], "dept_qtd": [3426, 2442, 1226, 1183, 918, 2229, 798, 371, 385, 994], "dept_valor": [4800742, 3038111, 2538052, 2451053, 609442, 524845, 460410, 354944, 240028, 128667], "dept_pct": [31.7, 20.1, 16.8, 16.2, 4.0, 3.5, 3.0, 2.3, 1.6, 0.8], "estado_names": ["RJ"], "estado_qtd": [17588], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [6207, 6100, 5241, 40], "canal_valor": [5166883, 5919827, 4885484, 21850], "band_names": ["A", "B"], "band_qtd": [7109, 10479]}, "estado_MG": {"kpis": {"vendas": 11101, "valor_sf": 10223224.0, "valor_cf": 10262396.0, "ticket": 921.0, "clientes": 9116}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [1151, 929, 808, 915, 754, 655, 984, 1145, 991, 865, 723, 489, 283, 304, 105], "daily_valor": [909848, 754551, 709968, 864180, 740177, 533930, 889745, 1259779, 983105, 813380, 686089, 462722, 253557, 258958, 103229], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Games"], "dept_qtd": [2158, 1526, 779, 783, 612, 1429, 485, 226, 235, 119], "dept_valor": [3100253, 1865037, 1653306, 1591256, 391214, 343478, 302015, 208263, 136227, 96107], "dept_pct": [32.0, 19.3, 17.1, 16.4, 4.0, 3.5, 3.1, 2.1, 1.4, 1.0], "estado_names": ["MG"], "estado_qtd": [11101], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [3851, 3821, 3414, 15], "canal_valor": [3163368, 3866218, 3186600, 7036], "band_names": ["A", "B"], "band_qtd": [4441, 6660]}, "estado_RS": {"kpis": {"vendas": 4165, "valor_sf": 3770008.0, "valor_cf": 3784330.0, "ticket": 905.0, "clientes": 3864}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [431, 345, 321, 327, 297, 238, 351, 405, 392, 330, 275, 188, 118, 105, 42], "daily_valor": [331958, 273260, 259027, 295594, 292292, 203196, 307419, 445792, 383392, 302434, 278112, 165383, 97906, 89685, 44553], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Esporte e Lazer"], "dept_qtd": [812, 567, 305, 274, 214, 504, 194, 99, 107, 33], "dept_valor": [1165547, 698360, 612987, 534805, 142128, 116742, 114989, 84495, 61896, 33667], "dept_pct": [32.7, 19.6, 17.2, 15.0, 4.0, 3.3, 3.2, 2.4, 1.7, 0.9], "estado_names": ["RS"], "estado_qtd": [4165], "canal_names": ["Internet", "Mobile", "Aplicativo", "Mobil"], "canal_qtd": [1463, 1428, 1268, 6], "canal_valor": [1447631, 1125869, 1192332, 4175], "band_names": ["A", "B"], "band_qtd": [1657, 2508]}, "estado_PR": {"kpis": {"vendas": 2789, "valor_sf": 2445521.0, "valor_cf": 2455751.0, "ticket": 877.0, "clientes": 2658}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [289, 210, 197, 258, 200, 169, 265, 265, 243, 231, 172, 115, 87, 67, 21], "daily_valor": [232732, 155376, 145032, 234821, 197468, 158067, 210657, 254647, 240752, 201753, 167314, 96029, 76276, 56269, 18321], "dept_names": ["Telefones e Celulares", "TVs e Acessorios", "Eletrodomesticos", "Informatica", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Esporte e Lazer"], "dept_qtd": [505, 201, 363, 183, 159, 361, 115, 55, 77, 28], "dept_valor": [712863, 430685, 414473, 365181, 106549, 90125, 67410, 52433, 41246, 31065], "dept_pct": [30.8, 18.6, 17.9, 15.8, 4.6, 3.9, 2.9, 2.3, 1.8, 1.3], "estado_names": ["PR"], "estado_qtd": [2789], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [1012, 936, 836, 5], "canal_valor": [836963, 882892, 724542, 1122], "band_names": ["A", "B"], "band_qtd": [1129, 1660]}, "estado_BA": {"kpis": {"vendas": 2047, "valor_sf": 1931310.0, "valor_cf": 1938666.0, "ticket": 943.0, "clientes": 1978}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [225, 168, 149, 178, 137, 113, 185, 190, 184, 176, 142, 70, 49, 54, 27], "daily_valor": [157989, 145383, 113909, 161508, 138872, 88390, 183104, 206296, 203216, 180584, 127432, 97854, 53069, 50916, 22782], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "Informatica", "TVs e Acessorios", "Moveis", "Acessorios e Inovacoes", "Eletroportateis", "Tablets", "Audio", "Automotivo"], "dept_qtd": [392, 289, 145, 147, 111, 93, 239, 49, 43, 31], "dept_valor": [555074, 393046, 303801, 301343, 68159, 63476, 51896, 41329, 30420, 16853], "dept_pct": [30.4, 21.5, 16.6, 16.5, 3.7, 3.5, 2.8, 2.3, 1.7, 0.9], "estado_names": ["BA"], "estado_qtd": [2047], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [738, 693, 607, 9], "canal_valor": [616027, 738074, 569275, 7932], "band_names": ["A", "B"], "band_qtd": [838, 1209]}, "estado_SC": {"kpis": {"vendas": 1952, "valor_sf": 1782705.0, "valor_cf": 1789922.0, "ticket": 913.0, "clientes": 1884}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [213, 144, 151, 156, 128, 117, 165, 215, 184, 133, 145, 88, 37, 58, 18], "daily_valor": [142652, 121333, 147412, 152720, 106525, 104060, 162345, 225266, 179323, 128510, 132558, 74001, 31590, 55107, 19296], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "Informatica", "TVs e Acessorios", "Moveis", "Eletroportateis", "Acessorios e Inovacoes", "Tablets", "Audio", "Games"], "dept_qtd": [345, 302, 120, 110, 111, 256, 103, 43, 44, 25], "dept_valor": [487499, 418496, 252577, 227161, 75349, 64274, 63076, 48236, 26820, 20864], "dept_pct": [28.9, 24.8, 15.0, 13.5, 4.5, 3.8, 3.7, 2.9, 1.6, 1.2], "estado_names": ["SC"], "estado_qtd": [1952], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [687, 671, 590, 4], "canal_valor": [562776, 649006, 567775, 3145], "band_names": ["A", "B"], "band_qtd": [806, 1146]}, "estado_DF": {"kpis": {"vendas": 1916, "valor_sf": 1740067.0, "valor_cf": 1746870.0, "ticket": 908.0, "clientes": 1863}, "daily_labels": ["30/03", "31/03", "01/04", "02/04", "03/04", "04/04", "05/04", "06/04", "07/04", "08/04", "09/04", "10/04", "11/04", "12/04", "13/04"], "daily_qtd": [202, 163, 139, 161, 124, 119, 166, 183, 154, 149, 123, 102, 54, 63, 14], "daily_valor": [155160, 121367, 128289, 142162, 97001, 120814, 142957, 198750, 157332, 123277, 122194, 121228, 51446, 47776, 10307], "dept_names": ["Telefones e Celulares", "Eletrodomesticos", "TVs e Acessorios", "Informatica", "Moveis", "Tablets", "Acessorios e Inovacoes", "Eletroportateis", "Audio", "Games"], "dept_qtd": [397, 252, 131, 135, 100, 50, 93, 209, 52, 21], "dept_valor": [541102, 313514, 266310, 262114, 63402, 53284, 48664, 46594, 32175, 16098], "dept_pct": [32.9, 19.1, 16.2, 16.0, 3.9, 3.2, 3.0, 2.8, 2.0, 1.0], "estado_names": ["DF"], "estado_qtd": [1916], "canal_names": ["Mobile", "Internet", "Aplicativo", "Mobil"], "canal_qtd": [691, 630, 589, 6], "canal_valor": [570791, 645502, 519255, 4517], "band_names": ["A", "B"], "band_qtd": [776, 1140]}}, "cli": {"total": 17040, "renda_media": 8241.0, "idade_media": 53.4, "age_labels": ["15-24", "25-34", "35-44", "45-54", "55-64", "65-74", "75+"], "age_values": [2942, 3671, 3657, 3733, 3656, 3670, 5096], "renda_labels": ["Até R$2,5k", "R$2,5-5k", "R$5-7,5k", "R$7,5-10k", "R$10-12,5k", "Acima R$12,5k"], "renda_values": [1999, 4895, 4871, 4865, 4913, 4882], "uf_labels": ["SP", "RJ", "MG", "RS", "PR", "SC", "BA", "DF", "PE", "GO"], "uf_values": [9893, 5729, 3696, 1369, 958, 660, 657, 616, 548, 514]}, "gkpi": {"vendas": 80228, "valor_sf": 72616660.0, "valor_cf": 72896751.0, "ticket": 905.0, "clientes": 26345, "frete_impacto_pct": 0.39, "top_dept": "Telefones e Celulares", "top_dept_pct": 32.2, "sp_pct": 40.0, "spike_dia": "30/03", "spike_val": 8173}};
+Chart.defaults.font.family="'Outfit',sans-serif";Chart.defaults.font.size=11;Chart.defaults.color='#94a3b8';Chart.defaults.borderColor='#eae9e4';
+const C={coral:'#e63946',blue:'#1d4ed8',amber:'#b45309',green:'#065f46',teal:'#0e7490'};
+const CH={'Mobile':C.blue,'Internet':C.coral,'Aplicativo':C.teal,'Mobil':C.amber};
+let ch={},cur='all';
+function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
+function fmt(v){if(v>=1e6)return'R$'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return'R$'+(v/1e3).toFixed(0)+'k';return'R$'+Math.round(v).toLocaleString('pt-BR');}
+function fN(v){return v>=1e3?(v/1e3).toFixed(1)+'k':String(v);}
+function sk(key){const c=document.getElementById('fC').value,b=document.getElementById('fB').value,e=document.getElementById('fE').value;if(c!=='all')return c;if(b!=='all')return b;if(e!=='all')return e;return'all';}
+function go(){cur=sk();const s=D.slices[cur]||D.slices.all;updHero(s);buildExec(s);buildMercado(s);const on=cur!=='all';document.getElementById('fi').classList.toggle('on',on);if(on){const nm={'canal_Mobile':'Mobile','canal_Internet':'Internet','canal_Aplicativo':'Aplicativo','canal_Mobil':'Mobil','band_A':'Brand A','band_B':'Brand B','estado_SP':'SP','estado_RJ':'RJ','estado_MG':'MG','estado_RS':'RS','estado_PR':'PR','estado_BA':'BA','estado_SC':'SC','estado_DF':'DF'};document.getElementById('ft').textContent=nm[cur]||cur;}}
+function reset(){document.getElementById('fC').value='all';document.getElementById('fB').value='all';document.getElementById('fE').value='all';cur='all';go();}
+function updHero(s){
+  anim(document.getElementById('hv-sf'),s.kpis.valor_sf,fmt);
+  document.getElementById('hv-v').textContent=s.kpis.vendas.toLocaleString('pt-BR');
+  document.getElementById('hv-t').textContent=fmt(s.kpis.ticket);
+  document.getElementById('hv-c').textContent=s.kpis.clientes.toLocaleString('pt-BR');
+  const n=s.daily_qtd.filter(v=>v>0).length||1;
+  document.getElementById('hv-med').textContent='~'+(Math.round(s.kpis.vendas/Math.max(n,1))).toLocaleString('pt-BR');
+  
+}
+function anim(el,tgt,fn){const t0=performance.now();(function tick(now){const t=Math.min((now-t0)/700,1),ease=1-Math.pow(1-t,3);el.textContent=fn(tgt*ease);if(t<1)requestAnimationFrame(tick);else el.textContent=fn(tgt);})(performance.now());}
+function spark(id,data,color){dc(id);const ctx=document.getElementById(id).getContext('2d');ch[id]=new Chart(ctx,{type:'line',data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:color,borderWidth:1.5,pointRadius:0,fill:false,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}});}
+function buildExec(s){
+  dc('cv');dc('cq');
+  // Revenue line
+  const cv=document.getElementById('cValD').getContext('2d');
+  const gv=cv.createLinearGradient(0,0,0,200);gv.addColorStop(0,'rgba(230,57,70,0.18)');gv.addColorStop(1,'rgba(230,57,70,0)');
+  ch.cv=new Chart(cv,{type:'line',data:{labels:s.daily_labels,datasets:[{data:s.daily_valor,borderColor:C.coral,backgroundColor:gv,fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:C.coral,pointHoverRadius:6,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{maxRotation:45,font:{size:10}}},y:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fmt(v),font:{size:10}}}}}});
+  // Volume bar with highlight
+  const maxI=s.daily_qtd.indexOf(Math.max(...s.daily_qtd));
+  const bgC=s.daily_qtd.map((_,i)=>i===maxI?C.coral:'#e0ddd6');
+  const cq=document.getElementById('cQtdD').getContext('2d');
+  ch.cq=new Chart(cq,{type:'bar',data:{labels:s.daily_labels,datasets:[{data:s.daily_qtd,backgroundColor:bgC,borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toLocaleString('pt-BR')+' sales'}}},scales:{x:{grid:{display:false},ticks:{maxRotation:45,font:{size:10}}},y:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fN(v),font:{size:10}}}}}});
+  // Dept bars
+  const el=document.getElementById('dL');el.innerHTML='';
+  const mx=Math.max(...s.dept_valor);const tot=s.dept_valor.reduce((a,b)=>a+b,0);
+  s.dept_names.forEach((n,i)=>{const p=(s.dept_valor[i]/tot*100).toFixed(1);const bw=(s.dept_valor[i]/mx*100);const col=i===0?C.coral:i<4?C.blue:'#c8cedf';const row=document.createElement('div');row.className='dr';row.innerHTML='<span class="dr-rank">'+(i+1)+'</span><span class="dr-name" title="'+n+'">'+n+'</span><div class="dr-bw"><div class="dr-bf" data-w="'+bw+'" style="background:'+col+'"></div></div><span class="dr-v">'+fmt(s.dept_valor[i])+'</span><span class="dr-p">'+p+'%</span>';el.appendChild(row);});
+  setTimeout(()=>el.querySelectorAll('.dr-bf').forEach(b=>b.style.width=b.dataset.w+'%'),80);
+}
+function buildMercado(s){
+  // Estado
+  const el=document.getElementById('eL');if(!el)return;el.innerHTML='';
+  const mx=Math.max(...s.estado_qtd);const tot=s.estado_qtd.reduce((a,b)=>a+b,0);
+  s.estado_names.forEach((n,i)=>{const p=(s.estado_qtd[i]/tot*100).toFixed(1);const bw=(s.estado_qtd[i]/mx*100);const row=document.createElement('div');row.className='er';row.innerHTML='<span class="er-flag">'+n+'</span><div class="er-bw"><div class="er-bf" data-w="'+bw+'" style="background:'+(i<3?C.blue:'#c8cedf')+'"></div></div><span class="er-q">'+s.estado_qtd[i].toLocaleString('pt-BR')+'</span><span class="er-p">'+p+'%</span>';el.appendChild(row);});
+  setTimeout(()=>el.querySelectorAll('.er-bf').forEach(b=>b.style.width=b.dataset.w+'%'),100);
+  // Channel compare
+  const cl=document.getElementById('chL');if(!cl)return;cl.innerHTML='';
+  const tQ=s.canal_qtd.reduce((a,b)=>a+b,0),tV=s.canal_valor.reduce((a,b)=>a+b,0),mQ=Math.max(...s.canal_qtd);
+  const bmap={'Mobile':'style="color:var(--blue);background:var(--blue-light)"','Internet':'style="color:var(--coral);background:var(--coral-light)"','Aplicativo':'style="color:var(--teal);background:var(--teal-light)"','Mobil':'style="color:var(--amber);background:var(--amber-light)"'};
+  s.canal_names.forEach((n,i)=>{const tk=s.canal_qtd[i]>0?Math.round(s.canal_valor[i]/s.canal_qtd[i]):0;const p=(s.canal_qtd[i]/tQ*100).toFixed(1);const bw=(s.canal_qtd[i]/mQ*100);const col=CH[n]||C.blue;const row=document.createElement('div');row.className='ch-row';row.innerHTML='<div class="ch-hdr"><span class="ch-name">'+n+'</span><span class="ch-badge font-mono" '+( bmap[n]||'' )+'>'+p+'% das vendas</span></div><div class="chm"><div><div class="cml">Transactions</div><div class="cmv">'+s.canal_qtd[i].toLocaleString('pt-BR')+'</div></div><div><div class="cml">Receita</div><div class="cmv">'+fmt(s.canal_valor[i])+'</div></div><div><div class="cml">Avg Order Value</div><div class="cmv" style="color:'+col+'">'+fmt(tk)+'</div></div></div><div class="ch-bw"><div class="ch-bf" data-w="'+bw+'" style="background:'+col+'"></div></div>';cl.appendChild(row);});
+  setTimeout(()=>cl.querySelectorAll('.ch-bf').forEach(b=>b.style.width=b.dataset.w+'%'),100);
+  // Bandeira donut
+  dc('cBand');const cB=document.getElementById('cBand');if(!cB)return;
+  const tot2=s.band_qtd.reduce((a,b)=>a+b,0);
+  ch.cBand=new Chart(cB.getContext('2d'),{type:'doughnut',data:{labels:s.band_names.map((n,i)=>'Bandeira '+n+' ('+( s.band_qtd[i]/tot2*100).toFixed(1)+'%)'),datasets:[{data:s.band_qtd,backgroundColor:[C.coral,C.blue],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:16,font:{size:11}}},tooltip:{callbacks:{label:c=>' '+c.label.split(' (')[0]+': '+c.parsed.toLocaleString('pt-BR')+' sales'}}}}});
+  // Dept qty
+  dc('cDQ');const cDQ=document.getElementById('cDQ');if(!cDQ)return;
+  ch.cDQ=new Chart(cDQ.getContext('2d'),{type:'bar',data:{labels:s.dept_names.map(n=>n.length>16?n.slice(0,16)+'...':n),datasets:[{data:s.dept_qtd,backgroundColor:s.dept_qtd.map((_,i)=>i===0?C.coral:i<4?C.blue:'#d1cfc8'),borderRadius:3,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.x.toLocaleString('pt-BR')+' transactions'}}},scales:{x:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fN(v)}},y:{grid:{display:false}}}}});
+}
+function buildCli(){
+  const cli=D.cli;
+  // Idade
+  dc('cI');const gA=document.getElementById('cI').getContext('2d');const gAg=gA.createLinearGradient(0,0,0,190);gAg.addColorStop(0,'rgba(29,78,216,.45)');gAg.addColorStop(1,'rgba(29,78,216,.04)');
+  ch.cI=new Chart(gA,{type:'bar',data:{labels:cli.age_labels,datasets:[{data:cli.age_values,backgroundColor:gAg,borderColor:C.blue,borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toLocaleString('pt-BR')+' clients'}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fN(v)}}}}});
+  // Renda
+  dc('cR');const gR=document.getElementById('cR').getContext('2d');const gRg=gR.createLinearGradient(0,0,0,190);gRg.addColorStop(0,'rgba(6,95,70,.42)');gRg.addColorStop(1,'rgba(6,95,70,.04)');
+  ch.cR=new Chart(gR,{type:'bar',data:{labels:cli.renda_labels,datasets:[{data:cli.renda_values,backgroundColor:gRg,borderColor:'#065f46',borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toLocaleString('pt-BR')+' clients'}}},scales:{x:{grid:{display:false},ticks:{maxRotation:30,font:{size:10}}},y:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fN(v)}}}}});
+  // UF
+  dc('cU');ch.cU=new Chart(document.getElementById('cU').getContext('2d'),{type:'bar',data:{labels:cli.uf_labels,datasets:[{data:cli.uf_values,backgroundColor:cli.uf_values.map((_,i)=>i===0?C.coral:i<3?C.blue:'#d1cfc8'),borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.y.toLocaleString('pt-BR')+' clients'}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f2ef'},ticks:{callback:v=>fN(v)}}}}});
+}
+function showPage(id,btn){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');const s=D.slices[cur]||D.slices.all;if(id==='exec')buildExec(s);if(id==='mercado')buildMercado(s);}
+document.addEventListener('DOMContentLoaded',function(){const s=D.slices.all;updHero(s);buildExec(s);buildMercado(s);buildCli();});
+</script>
+</body>
+</html>

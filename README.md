@@ -1,25 +1,59 @@
-# Project to Predict E-commerce Outcomes Using Power BI
+# Commerce Intelligence Report
 
-Building a management dashboard for an e-commerce business that aims to analyze its sales and thus define the best strategy to boost its results. Project developed using two databases: one with sales data and another with customer information.
+Interactive e-commerce analytics dashboard built with HTML, CSS and Chart.js.
 
-Created Cards:
-Sales quantity / Total sales value without shipping / Total sales value with shipping  / Customer quantity.
+**Live demo:** [commerce-intelligence-report.vercel.app](https://commerce-intelligence-report.vercel.app)
 
-Created Line Charts:
-Sales count per month / Total sales value per month.
+---
 
-Created Bar Charts:
-Sales quantity by category / Total sales value by category / Customer age distribution / Customer income distribution.
+## About
 
-Created Filters:
-Brand / State / Sales channel / Department / Age / Income range / Birth state.
+Full analysis of 80,228 transactions from a Brazilian e-commerce operation (March-April 2021). Three-page interactive dashboard with real data, live filters and business storytelling.
 
-The creation of the dashboards enabled the business team to develop action plans aimed at increasing the number of registered users and driving the company's growth.
+**Pages:**
+- Executive Overview — KPIs, daily revenue, department breakdown
+- Market & Channels — geographic distribution, channel performance, card brand analysis
+- Customer Profile — age distribution, income brackets, geographic origin
 
-![Dashboard de Vendas](https://github.com/martinez-ie/powerbi-dashboards/blob/main/1.png)
+**Key findings:**
+- R$72.6M in revenue over 15 days
+- Top 4 departments account for 84% of total revenue
+- Internet channel generates 19% higher average order value than Mobile
+- SP + RJ + MG concentrate 73% of national sales volume
+- 75+ is the largest customer age group
 
-![Dashboard de Vendas](https://github.com/martinez-ie/powerbi-dashboards/blob/main/2.png)
+---
 
+## Tech stack
 
+- HTML / CSS / JavaScript — zero dependencies, no build step
+- Chart.js 4.4 — data visualisation
+- Google Fonts — Outfit + JetBrains Mono
+- Vercel — hosting
 
+---
 
+## Dataset
+
+Two source tables joined on `cliente_Log`:
+
+| Table | Rows | Key columns |
+|---|---|---|
+| base compra | 80,228 | date, price, department, state, channel, card brand |
+| Base cliente | 26,425 | age, income, state of birth |
+
+---
+
+## Run locally
+
+```bash
+open index.html
+```
+
+No server or build step required. All data is embedded in the HTML file.
+
+---
+
+Built by **Ingrid Martinez** — Data Analyst — Kilkenny, Ireland
+
+[LinkedIn](https://www.linkedin.com/in/ingridmartinezm/) · [GitHub](https://github.com/martinez-ie) · [Portfolio](https://ingrid-martinez-portfolio.vercel.app/)
