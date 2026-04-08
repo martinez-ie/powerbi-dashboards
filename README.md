@@ -2,7 +2,7 @@
 
 Interactive e-commerce analytics dashboard built with HTML, CSS and Chart.js.
 
-**Live demo:** [commerce-intelligence-report.vercel.app](https://commerce-intelligence-report.vercel.app)
+**Live demo:** [commerce-intelligence-report.vercel.app](https://powerbi-dashboards-three.vercel.app/)
 
 ---
 
