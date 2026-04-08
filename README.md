@@ -2,9 +2,7 @@
 
 > Interactive management dashboard analysing 80,228 e-commerce transactions across Brazil - built to answer the business questions that drive revenue strategy.
 
-**[Live Demo](https://commerce-intelligence-report.vercel.app)** · [GitHub](https://github.com/martinez-ie/powerbi-dashboards)
-
-![Dashboard preview](https://raw.githubusercontent.com/martinez-ie/powerbi-dashboards/main/commerce-intelligence-report/preview.png)
+**[Live Demo](https://powerbi-dashboards-three.vercel.app/)** · [GitHub](https://github.com/martinez-ie/powerbi-dashboards)
 
 ---
 
